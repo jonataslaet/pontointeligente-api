@@ -5,6 +5,8 @@ import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -26,6 +28,7 @@ public class Lancamento implements Serializable{
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Long id;
 	
+	@Temporal(TemporalType.TIMESTAMP)
 	@Column(nullable = false)
 	private Date data;
 	
@@ -39,7 +42,7 @@ public class Lancamento implements Serializable{
 	@Column(nullable = false)
 	private Date dataAtualizacao;
 	
-	@Temporal(TemporalType.TIMESTAMP)
+	@Enumerated(EnumType.STRING)
 	private TipoLancamentoEnum tipo;
 	
 	@ManyToOne(fetch = FetchType.EAGER)
