@@ -17,6 +17,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.PrePersist;
+import javax.persistence.PreUpdate;
 import javax.persistence.Transient;
 
 import br.com.jonataslaet.pontointeligenteapi.domain.enums.PerfilEnum;
@@ -186,6 +188,18 @@ public class Funcionario implements Serializable{
 		this.lancamentos = lancamentos;
 	}
 
+	@PreUpdate
+	public void preUpdate() {
+		dataAtualizacao = new Date();
+	}
+	
+	@PrePersist
+	public void prePersist() {
+		final Date atual = new Date();
+		dataCriacao = atual;
+		dataAtualizacao = atual;
+	}
+	
 	@Override
 	public int hashCode() {
 		final int prime = 31;
