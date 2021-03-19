@@ -49,7 +49,7 @@ public class FuncionarioServiceTest {
 	
 	@Test
 	public void testBuscarFuncionarioPorCpf() {
-		Optional<Funcionario> funcionario = this.funcionarioService.buscarPorCpf("jonatas@gmail.com");
+		Optional<Funcionario> funcionario = this.funcionarioService.buscarPorCpf("05510256389");
 		assertTrue(funcionario.isPresent());
 	}
 	
