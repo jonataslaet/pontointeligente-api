@@ -3,6 +3,7 @@ package br.com.jonataslaet.pontointeligenteapi.services;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.util.ArrayList;
+import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -34,7 +35,7 @@ public class LancamentoServiceTest {
 		BDDMockito
 			.given(this.lancamentoRepository.findByFuncionarioId(Mockito.anyLong(), Mockito.any(PageRequest.class)))
 			.willReturn(new PageImpl<Lancamento>(new ArrayList<Lancamento>()));
-		BDDMockito.given(this.lancamentoRepository.findById(Mockito.anyLong()).get()).willReturn(new Lancamento());
+		BDDMockito.given(this.lancamentoRepository.findById(Mockito.anyLong())).willReturn(Optional.of(new Lancamento()));
 		BDDMockito.given(this.lancamentoRepository.save(Mockito.any(Lancamento.class))).willReturn(new Lancamento());
 	}
 	
