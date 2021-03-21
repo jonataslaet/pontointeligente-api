@@ -11,13 +11,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.ObjectError;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import br.com.jonataslaet.pontointeligenteapi.PasswordUtils;
+import br.com.jonataslaet.pontointeligenteapi.controllers.dtos.FuncionarioDTO;
 import br.com.jonataslaet.pontointeligenteapi.controllers.dtos.FuncionarioNewDTO;
+import br.com.jonataslaet.pontointeligenteapi.controllers.dtos.FuncionarioUpdateDTO;
 import br.com.jonataslaet.pontointeligenteapi.controllers.dtos.Response;
 import br.com.jonataslaet.pontointeligenteapi.domain.Empresa;
 import br.com.jonataslaet.pontointeligenteapi.domain.Funcionario;
@@ -40,6 +45,73 @@ public class FuncionarioController {
 	public FuncionarioController() {
 	}
 	
+	@GetMapping(value="/{id}")
+	public ResponseEntity<Response<FuncionarioDTO>> buscarPorId(@PathVariable("id") Long id){
+		
+		log.info("Buscando funcionário de ID: {}", id);
+		
+		Response<FuncionarioDTO> response = new Response<FuncionarioDTO>();
+		Optional<Funcionario> funcionario = funcionarioService.buscarPorId(id);
+		
+		if (!funcionario.isPresent()) {
+			log.info("Funcionário não encontrado para o ID: {}", id);
+			response.getErrors().add("Funcionário não encontrado para o ID " + id);
+			return ResponseEntity.badRequest().body(response);
+		}
+		
+		response.setData(this.converterFuncionarioDTO(funcionario.get()));
+		return ResponseEntity.ok(response);
+	}
+	
+	@PutMapping(value="/{id}")
+	public ResponseEntity<Response<FuncionarioUpdateDTO>> atualizar(@PathVariable("id") Long id, 
+			@Valid @RequestBody FuncionarioUpdateDTO funcionarioUpdateDTO, BindingResult result){
+		log.info("Atualizando funcionário: {}", funcionarioUpdateDTO.toString());
+		Response<FuncionarioUpdateDTO> response = new Response<FuncionarioUpdateDTO>();
+		
+		Optional<Funcionario> funcionario = this.funcionarioService.buscarPorId(id);
+		
+		if (!funcionario.isPresent()) {
+			result.addError(new ObjectError("funcionario", "Funcionário não encontrado."));
+		}
+		
+		this.atualizarDadosfuncionario(funcionario.get(), funcionarioUpdateDTO, result);
+		if (result.hasErrors()) {
+			log.error("Erro de validação ao atualizar funcionário: {}", result.getAllErrors());
+			result.getAllErrors().forEach(error -> response.getErrors().add(error.getDefaultMessage()));
+			return ResponseEntity.badRequest().body(response);
+		}
+		
+		this.funcionarioService.persistir(funcionario.get());
+		response.setData(this.converterPessoaFisicaUpdateDTO(funcionario.get()));
+		
+		return ResponseEntity.ok(response);
+	}
+	
+	private void atualizarDadosfuncionario(Funcionario funcionario, @Valid FuncionarioUpdateDTO funcionarioUpdateDTO,
+			BindingResult result) {
+		funcionario.setNome(funcionarioUpdateDTO.getNome());
+		
+		if (!funcionario.getEmail().equals(funcionarioUpdateDTO.getEmail())) {
+			this.funcionarioService.buscarPorEmail(funcionarioUpdateDTO.getEmail())
+				.ifPresent(func -> result.addError(new ObjectError("email", "Email já existente")));
+			funcionario.setEmail(funcionarioUpdateDTO.getEmail());
+		}
+		
+		funcionario.setQtdHorasAlmoco(null);
+		funcionarioUpdateDTO.getQtdHorasAlmoco().ifPresent(qtdHorasAlmoco -> funcionario.setQtdHorasAlmoco(Float.valueOf(qtdHorasAlmoco)));
+		
+		funcionario.setQtdHorasTrabalhoDia(null);
+		funcionarioUpdateDTO.getQtdHorasTrabalhoDia().ifPresent(qtdHorasTrabalhoDia -> funcionario.setQtdHorasTrabalhoDia(Float.valueOf(qtdHorasTrabalhoDia)));
+		
+		funcionario.setValorHora(null);
+		funcionarioUpdateDTO.getValorHora().ifPresent(valorHora -> funcionario.setValorHora(new BigDecimal(valorHora)));
+		
+		if (funcionarioUpdateDTO.getSenha().isPresent()) {
+			funcionario.setSenha(PasswordUtils.gerarBCrypt(funcionarioUpdateDTO.getSenha().get()));
+		}
+	}
+
 	@PostMapping
 	public ResponseEntity<Response<FuncionarioNewDTO>> cadastrar(@Valid @RequestBody FuncionarioNewDTO cadastroPF, BindingResult result) {
 		
@@ -100,5 +172,27 @@ public class FuncionarioController {
 		funcionario.getValorHoraOpt().ifPresent(valorHora -> pessoaFisicaDTO.setValorHora(Optional.of(valorHora.toString())));
 		
 		return pessoaFisicaDTO;
+	}
+	
+	private FuncionarioUpdateDTO converterPessoaFisicaUpdateDTO(Funcionario funcionario) {
+		FuncionarioUpdateDTO pessoaFisicaDTO = new FuncionarioUpdateDTO();
+		pessoaFisicaDTO.setId(funcionario.getId());
+		pessoaFisicaDTO.setNome(funcionario.getNome());
+		pessoaFisicaDTO.setEmail(funcionario.getEmail());
+		
+		funcionario.getQtdHorasAlmocOpt().ifPresent(qtdHorasAlmoco -> pessoaFisicaDTO.setQtdHorasAlmoco(Optional.of(Float.toString(qtdHorasAlmoco))));
+		funcionario.getQtdHorasTrabalhoDiaOpt().ifPresent(qtdHorasTrabalhoDia -> pessoaFisicaDTO.setQtdHorasTrabalhoDia(Optional.of(Float.toString(qtdHorasTrabalhoDia))));
+		funcionario.getValorHoraOpt().ifPresent(valorHora -> pessoaFisicaDTO.setValorHora(Optional.of(valorHora.toString())));
+		
+		return pessoaFisicaDTO;
+	}
+	
+	private FuncionarioDTO converterFuncionarioDTO(Funcionario funcionario) {
+		FuncionarioDTO funcionarioDTO = new FuncionarioDTO();
+		funcionarioDTO.setId(funcionario.getId());
+		funcionarioDTO.setNome(funcionario.getNome());
+		funcionarioDTO.setCpf(funcionario.getCpf());
+		
+		return funcionarioDTO;
 	}
 }
