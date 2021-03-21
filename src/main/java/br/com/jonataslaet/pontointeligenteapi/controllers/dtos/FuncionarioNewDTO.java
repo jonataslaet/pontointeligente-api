@@ -7,7 +7,7 @@ import javax.validation.constraints.NotEmpty;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.br.CPF;
 
-public class PessoaFisicaNewDTO {
+public class FuncionarioNewDTO {
 	
 	private Long id;
 	
@@ -31,7 +31,7 @@ public class PessoaFisicaNewDTO {
 	private Optional<String> qtdHorasAlmoco = Optional.empty();
 	private String cnpj;
 	
-	public PessoaFisicaNewDTO() {
+	public FuncionarioNewDTO() {
 	}
 
 	public Long getId() {

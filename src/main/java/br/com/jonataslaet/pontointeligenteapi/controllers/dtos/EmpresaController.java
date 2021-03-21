@@ -22,8 +22,8 @@ import br.com.jonataslaet.pontointeligenteapi.services.FuncionarioServiceInterfa
 
 @RestController
 @RequestMapping(value = "/api/empresas")
-public class PessoaJuridicaController {
-	private static final Logger log = LoggerFactory.getLogger(PessoaJuridicaController.class);
+public class EmpresaController {
+	private static final Logger log = LoggerFactory.getLogger(EmpresaController.class);
 	
 	@Autowired
 	private FuncionarioServiceInterface funcionarioService;
@@ -31,15 +31,15 @@ public class PessoaJuridicaController {
 	@Autowired
 	private EmpresaServiceInterface empresaService;
 	
-	public PessoaJuridicaController() {
+	public EmpresaController() {
 		
 	}
 	
 	@PostMapping
-	public ResponseEntity<Response<PessoaJuridicaNewDTO>> cadastrar(@Valid @RequestBody PessoaJuridicaNewDTO cadastroPJDto, BindingResult result){
+	public ResponseEntity<Response<EmpresaNewDTO>> cadastrar(@Valid @RequestBody EmpresaNewDTO cadastroPJDto, BindingResult result){
 		
 		log.info("Cadastrando Pessoa Jurídica: {}", cadastroPJDto.toString());
-		Response<PessoaJuridicaNewDTO> response = new Response<PessoaJuridicaNewDTO>();
+		Response<EmpresaNewDTO> response = new Response<EmpresaNewDTO>();
 		
 		validarDadosExistentes(cadastroPJDto, result);
 		
@@ -60,8 +60,8 @@ public class PessoaJuridicaController {
 		return ResponseEntity.ok(response);
 	}
 
-	private PessoaJuridicaNewDTO converterPessoaJuridicaNewDTO(Funcionario funcionario) {
-		PessoaJuridicaNewDTO cadastroPJDto = new PessoaJuridicaNewDTO();
+	private EmpresaNewDTO converterPessoaJuridicaNewDTO(Funcionario funcionario) {
+		EmpresaNewDTO cadastroPJDto = new EmpresaNewDTO();
 		cadastroPJDto.setId(funcionario.getId());
 		cadastroPJDto.setNome(funcionario.getNome());
 		cadastroPJDto.setEmail(funcionario.getEmail());
@@ -72,20 +72,20 @@ public class PessoaJuridicaController {
 		return cadastroPJDto;
 	}
 
-	private void validarDadosExistentes(@Valid PessoaJuridicaNewDTO cadastroPJDto, BindingResult result) {
+	private void validarDadosExistentes(@Valid EmpresaNewDTO cadastroPJDto, BindingResult result) {
 		this.empresaService.buscarPorCnpj(cadastroPJDto.getCnpj()).ifPresent(emp -> result.addError(new ObjectError("empresa", "Empresa já existente.")));
 		this.funcionarioService.buscarPorCpf(cadastroPJDto.getCpf()).ifPresent(pf -> result.addError(new ObjectError("funcionario", "CPF já existente.")));
 		this.funcionarioService.buscarPorEmail(cadastroPJDto.getEmail()).ifPresent(pf -> result.addError(new ObjectError("funcionario", "Email já existente.")));
 	}
 	
-	private Empresa converterDtoParaEmpresa(PessoaJuridicaNewDTO empresaDto) {
+	private Empresa converterDtoParaEmpresa(EmpresaNewDTO empresaDto) {
 		Empresa empresa = new Empresa();
 		empresa.setCnpj(empresaDto.getCnpj());
 		empresa.setRazaoSocial(empresaDto.getRazaoSocial());
 		return empresa;
 	}
 	
-	private Funcionario converterDtoParaFuncionario(PessoaJuridicaNewDTO empresaDto, BindingResult result) {
+	private Funcionario converterDtoParaFuncionario(EmpresaNewDTO empresaDto, BindingResult result) {
 		Funcionario funcionario = new Funcionario();
 		funcionario.setNome(empresaDto.getNome());
 		funcionario.setEmail(empresaDto.getEmail());

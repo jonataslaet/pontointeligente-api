@@ -25,9 +25,9 @@ import br.com.jonataslaet.pontointeligenteapi.services.FuncionarioServiceInterfa
 
 @RestController
 @RequestMapping(value="/api/funcionarios")
-public class PessoaFisicaController {
+public class FuncionarioController {
 
-	private static final Logger log = LoggerFactory.getLogger(PessoaFisicaController.class);
+	private static final Logger log = LoggerFactory.getLogger(FuncionarioController.class);
 	
 	@Autowired
 	private EmpresaServiceInterface empresaService;
@@ -35,14 +35,14 @@ public class PessoaFisicaController {
 	@Autowired
 	private FuncionarioServiceInterface funcionarioService;
 
-	public PessoaFisicaController() {
+	public FuncionarioController() {
 	}
 	
 	@PostMapping
-	public ResponseEntity<Response<PessoaFisicaNewDTO>> cadastrar(@Valid @RequestBody PessoaFisicaNewDTO cadastroPF, BindingResult result) {
+	public ResponseEntity<Response<FuncionarioNewDTO>> cadastrar(@Valid @RequestBody FuncionarioNewDTO cadastroPF, BindingResult result) {
 		
 		log.info("Cadastrando pessoa física: {}", cadastroPF.toString());
-		Response<PessoaFisicaNewDTO> response = new Response<PessoaFisicaNewDTO>();
+		Response<FuncionarioNewDTO> response = new Response<FuncionarioNewDTO>();
 		
 		validarDadosExistentes(cadastroPF, result);
 		Funcionario funcionario = this.converterDtoParaFuncionario(cadastroPF, result);
@@ -61,7 +61,7 @@ public class PessoaFisicaController {
 		return ResponseEntity.ok(response);
 	}
 	
-	private void validarDadosExistentes(@Valid PessoaFisicaNewDTO cadastroPF, BindingResult result) {
+	private void validarDadosExistentes(@Valid FuncionarioNewDTO cadastroPF, BindingResult result) {
 		Optional<Empresa> empresa = this.empresaService.buscarPorCnpj(cadastroPF.getCnpj());
 		if (!empresa.isPresent()) {
 			result.addError(new ObjectError("empresa", "Empresa não cadastrada"));
@@ -70,7 +70,7 @@ public class PessoaFisicaController {
 		this.funcionarioService.buscarPorEmail(cadastroPF.getEmail()).ifPresent(pf -> result.addError(new ObjectError("funcionario", "Email já existente.")));
 	}
 	
-	private Funcionario converterDtoParaFuncionario(PessoaFisicaNewDTO pessoaFisicaDTO, BindingResult result) {
+	private Funcionario converterDtoParaFuncionario(FuncionarioNewDTO pessoaFisicaDTO, BindingResult result) {
 		Funcionario funcionario = new Funcionario();
 		funcionario.setNome(pessoaFisicaDTO.getNome());
 		funcionario.setEmail(pessoaFisicaDTO.getEmail());
@@ -85,8 +85,8 @@ public class PessoaFisicaController {
 		return funcionario;
 	}
 	
-	private PessoaFisicaNewDTO converterPessoaFisicaNewDTO(Funcionario funcionario) {
-		PessoaFisicaNewDTO pessoaFisicaDTO = new PessoaFisicaNewDTO();
+	private FuncionarioNewDTO converterPessoaFisicaNewDTO(Funcionario funcionario) {
+		FuncionarioNewDTO pessoaFisicaDTO = new FuncionarioNewDTO();
 		pessoaFisicaDTO.setId(funcionario.getId());
 		pessoaFisicaDTO.setNome(funcionario.getNome());
 		pessoaFisicaDTO.setEmail(funcionario.getEmail());

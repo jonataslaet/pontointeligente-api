@@ -6,7 +6,7 @@ import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.br.CNPJ;
 import org.hibernate.validator.constraints.br.CPF;
 
-public class PessoaJuridicaNewDTO {
+public class EmpresaNewDTO {
 
 	private Long id;
 	
@@ -31,7 +31,7 @@ public class PessoaJuridicaNewDTO {
 	@CNPJ(message = "CNPJ inválido")
 	private String cnpj;
 
-	public PessoaJuridicaNewDTO() {
+	public EmpresaNewDTO() {
 	}
 
 	public Long getId() {
