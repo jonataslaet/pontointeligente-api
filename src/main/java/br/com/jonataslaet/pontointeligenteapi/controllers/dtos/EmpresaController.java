@@ -1,5 +1,7 @@
 package br.com.jonataslaet.pontointeligenteapi.controllers.dtos;
 
+import java.util.Optional;
+
 import javax.validation.Valid;
 
 import org.slf4j.Logger;
@@ -8,6 +10,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.ObjectError;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -33,6 +37,24 @@ public class EmpresaController {
 	
 	public EmpresaController() {
 		
+	}
+	
+	@GetMapping(value="/{cnpj}")
+	public ResponseEntity<Response<EmpresaDTO>> buscarPorCnpj(@PathVariable("cnpj") String cnpj){
+		
+		log.info("Buscando empresa por CNPJ: {}", cnpj);
+		
+		Response<EmpresaDTO> response = new Response<EmpresaDTO>();
+		Optional<Empresa> empresa = empresaService.buscarPorCnpj(cnpj);
+		
+		if (!empresa.isPresent()) {
+			log.info("Empresa não encontrada para o CNPJ: {}", cnpj);
+			response.getErrors().add("Empresa não encontrada para o CNPJ " + cnpj);
+			return ResponseEntity.badRequest().body(response);
+		}
+		
+		response.setData(this.converterEmpresaDTO(empresa.get()));
+		return ResponseEntity.ok(response);
 	}
 	
 	@PostMapping
@@ -94,6 +116,15 @@ public class EmpresaController {
 		funcionario.setSenha(PasswordUtils.gerarBCrypt(empresaDto.getSenha()));
 		
 		return funcionario;
+	}
+	
+	private EmpresaDTO converterEmpresaDTO(Empresa empresa) {
+		EmpresaDTO empresaDTO = new EmpresaDTO();
+		empresaDTO.setId(empresa.getId());
+		empresaDTO.setCnpj(empresa.getCnpj());
+		empresaDTO.setRazaoSocial(empresa.getRazaoSocial());
+		
+		return empresaDTO;
 	}
 
 }
