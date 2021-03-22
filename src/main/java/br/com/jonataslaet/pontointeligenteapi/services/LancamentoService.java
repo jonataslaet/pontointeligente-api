@@ -29,7 +29,7 @@ public class LancamentoService implements LancamentoServiceInterface{
 	@Override
 	public Optional<Lancamento> buscarPorId(Long id) {
 		log.info("Buscando lançamentos pelo ID: {}", id);
-		return Optional.ofNullable(this.lancamentoRepository.buscarPorId(id));
+		return Optional.ofNullable(this.lancamentoRepository.findOne(id));
 	}
 
 	@Override

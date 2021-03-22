@@ -1,6 +1,7 @@
 package br.com.jonataslaet.pontointeligenteapi.services;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
 import java.util.Optional;
@@ -28,14 +29,14 @@ public class LancamentoServiceTest {
 	private LancamentoRepository lancamentoRepository;
 	
 	@Autowired
-	private LancamentoService lancamentoService;
+	private LancamentoServiceInterface lancamentoService;
 	
 	@BeforeEach
 	public void setUp() {
 		BDDMockito
 			.given(this.lancamentoRepository.findByFuncionarioId(Mockito.anyLong(), Mockito.any(PageRequest.class)))
 			.willReturn(new PageImpl<Lancamento>(new ArrayList<Lancamento>()));
-		BDDMockito.given(this.lancamentoRepository.findById(Mockito.anyLong())).willReturn(Optional.of(new Lancamento()));
+		BDDMockito.given(this.lancamentoRepository.findOne(Mockito.anyLong())).willReturn(new Lancamento());
 		BDDMockito.given(this.lancamentoRepository.save(Mockito.any(Lancamento.class))).willReturn(new Lancamento());
 	}
 	
@@ -47,8 +48,8 @@ public class LancamentoServiceTest {
 	
 	@Test
 	public void testBuscarLancamentoPorId() {
-		Lancamento lancamento = this.lancamentoService.buscarPorId(1L).get();
-		assertNotNull(lancamento);
+		Optional<Lancamento> lancamento = this.lancamentoService.buscarPorId(1L);
+		assertTrue(lancamento.isPresent());
 	}
 	
 	@Test
