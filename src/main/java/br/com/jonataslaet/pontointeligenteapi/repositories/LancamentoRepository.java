@@ -32,5 +32,5 @@ public interface LancamentoRepository extends JpaRepository<Lancamento, Long>{
 	
 	@Transactional(readOnly=true)
 	@Query("select l from Lancamento l where l.id = :idLancamento")
-	Lancamento buscarPorId(@Param("idLancamento") Long id);
+	Lancamento findOne(@Param("idLancamento") Long id);
 }
