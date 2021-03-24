@@ -19,7 +19,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import br.com.jonataslaet.pontointeligenteapi.PasswordUtils;
 import br.com.jonataslaet.pontointeligenteapi.controllers.dtos.FuncionarioDTO;
 import br.com.jonataslaet.pontointeligenteapi.controllers.dtos.FuncionarioNewDTO;
 import br.com.jonataslaet.pontointeligenteapi.controllers.dtos.FuncionarioUpdateDTO;
@@ -27,6 +26,7 @@ import br.com.jonataslaet.pontointeligenteapi.controllers.dtos.Response;
 import br.com.jonataslaet.pontointeligenteapi.domain.Empresa;
 import br.com.jonataslaet.pontointeligenteapi.domain.Funcionario;
 import br.com.jonataslaet.pontointeligenteapi.domain.enums.PerfilEnum;
+import br.com.jonataslaet.pontointeligenteapi.security.PasswordUtils;
 import br.com.jonataslaet.pontointeligenteapi.services.EmpresaServiceInterface;
 import br.com.jonataslaet.pontointeligenteapi.services.FuncionarioServiceInterface;
 

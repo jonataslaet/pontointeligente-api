@@ -15,6 +15,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
@@ -52,6 +53,7 @@ public class LancamentoControllerTest {
 	private final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 	
 	@Test
+	@WithMockUser
 	public void testCadastrarLancamento() throws Exception {
 		Lancamento lancamento = obterDadosLancamento();
 		BDDMockito.given(this.funcionarioService.buscarPorId(Mockito.anyLong())).willReturn(Optional.of(new Funcionario()));
@@ -66,6 +68,7 @@ public class LancamentoControllerTest {
 	}
 	
 	@Test
+	@WithMockUser
 	public void testCadastrarLancamentoIdInvalido() throws JsonProcessingException, Exception {
 		BDDMockito.given(this.funcionarioService.buscarPorId(Mockito.anyLong())).willReturn(Optional.empty());
 		
@@ -77,12 +80,21 @@ public class LancamentoControllerTest {
 	}
 	
 	@Test
+	@WithMockUser(username = "jonataslaet@gmail.com", roles = {"ADMIN"})
 	public void testRemoverLancamento() throws Exception {
 		BDDMockito.given(this.lancamentoService.buscarPorId(Mockito.anyLong())).willReturn(Optional.of(new Lancamento()));
 		mvc.perform(MockMvcRequestBuilders.delete(URL_BASE + ID_LANCAMENTO).accept(MediaType.APPLICATION_JSON)).andExpect(status().isOk());
 	}
 	
 	@Test
+	@WithMockUser(username = "mariajucilene016@gmail.com", roles = {"USUARIO"})
+	public void testRemoverLancamentoAcessoNegado() throws Exception {
+		BDDMockito.given(this.lancamentoService.buscarPorId(Mockito.anyLong())).willReturn(Optional.of(new Lancamento()));
+		mvc.perform(MockMvcRequestBuilders.delete(URL_BASE + ID_LANCAMENTO).accept(MediaType.APPLICATION_JSON)).andExpect(status().isForbidden());
+	}
+	
+	@Test
+	@WithMockUser
 	public void testBuscarLancamentoIdInvalido() throws Exception {
 		String idInvalido = "999";
 		BDDMockito.given(this.lancamentoService.buscarPorId(Mockito.anyLong())).willReturn(Optional.empty());
