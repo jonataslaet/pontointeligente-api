@@ -10,10 +10,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 
-import br.com.jonataslaet.pontointeligenteapi.PasswordUtils;
 import br.com.jonataslaet.pontointeligenteapi.domain.Empresa;
 import br.com.jonataslaet.pontointeligenteapi.domain.Funcionario;
 import br.com.jonataslaet.pontointeligenteapi.domain.enums.PerfilEnum;
+import br.com.jonataslaet.pontointeligenteapi.security.PasswordUtils;
 
 @SpringBootTest
 @ActiveProfiles("test")

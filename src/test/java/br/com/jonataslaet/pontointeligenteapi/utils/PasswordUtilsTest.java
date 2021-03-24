@@ -6,7 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.Test;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
-import br.com.jonataslaet.pontointeligenteapi.PasswordUtils;
+import br.com.jonataslaet.pontointeligenteapi.security.PasswordUtils;
 
 public class PasswordUtilsTest {
 

@@ -15,12 +15,12 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.test.context.ActiveProfiles;
 
-import br.com.jonataslaet.pontointeligenteapi.PasswordUtils;
 import br.com.jonataslaet.pontointeligenteapi.domain.Empresa;
 import br.com.jonataslaet.pontointeligenteapi.domain.Funcionario;
 import br.com.jonataslaet.pontointeligenteapi.domain.Lancamento;
 import br.com.jonataslaet.pontointeligenteapi.domain.enums.PerfilEnum;
 import br.com.jonataslaet.pontointeligenteapi.domain.enums.TipoLancamentoEnum;
+import br.com.jonataslaet.pontointeligenteapi.security.PasswordUtils;
 
 @SpringBootTest
 @ActiveProfiles("test")
