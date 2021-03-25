@@ -3,7 +3,7 @@ package br.com.jonataslaet.pontointeligenteapi.configs;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
+import org.springframework.context.annotation.Profile;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
@@ -22,6 +22,7 @@ import br.com.jonataslaet.pontointeligenteapi.security.JWTAuthenticationTokenFil
 @Configuration
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
+@Profile("dev")
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
 	@Autowired
@@ -32,7 +33,10 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 	
 	public static final String[] PUBLIC_MATCHERS = {
 			"/h2-console/**",
-			"/auth/**"
+			"/auth/**",
+			"/v2/**",
+			"/swagger-resources/**",
+			"/swagger-ui/**"
 	};
 	
 	@Override
