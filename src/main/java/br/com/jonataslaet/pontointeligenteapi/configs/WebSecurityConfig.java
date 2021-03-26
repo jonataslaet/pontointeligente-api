@@ -22,7 +22,6 @@ import br.com.jonataslaet.pontointeligenteapi.security.JWTAuthenticationTokenFil
 @Configuration
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
-@Profile("dev")
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
 	@Autowired
